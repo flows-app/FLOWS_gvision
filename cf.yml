@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "meshify gvision"
+Resources:
+  MESHIFYgvisiongettextFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code: MESHIFY_gvision_gettext
+      Handler: main.handler
+      Role:
+        Fn::GetAtt: [ LambdaRole , Arn ]
+      Runtime: python3.6
+      Timeout: 300
+  MESHIFYgvisiongettextConfig:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/MESHIFY/MESHIFY/gvision/gettext/lambda"
+      Description: meshify tempfile task arn
+      Type: String
+      Value:
+        Fn::GetAtt: [ MESHIFYgvisiongettextFunction , Arn ]
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: LambdaRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Resource: arn:aws:logs:*:*:*
+            - Effect: Allow
+              Action:
+              - ssm:GetParameter
+              - ssm:GetParameters
+              Resource: "*"
