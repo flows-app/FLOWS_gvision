@@ -1,5 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: "meshify gvision"
+Parameters:
+  GoogleApiKey:
+    Type: String
 Resources:
   MESHIFYgvisiongettextFunction:
     Type: AWS::Lambda::Function
@@ -10,14 +13,10 @@ Resources:
         Fn::GetAtt: [ LambdaRole , Arn ]
       Runtime: python3.6
       Timeout: 300
-  MESHIFYgvisiongettextConfig:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: "/MESHIFY/MESHIFY/gvision/gettext/lambda"
-      Description: meshify tempfile task arn
-      Type: String
-      Value:
-        Fn::GetAtt: [ MESHIFYgvisiongettextFunction , Arn ]
+      Environment:
+        Variables:
+          GoogleApiKey:
+            Ref: GoogleApiKey
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -42,8 +41,35 @@ Resources:
               - logs:CreateLogStream
               - logs:PutLogEvents
               Resource: arn:aws:logs:*:*:*
+  InvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS:
+            - 321232316075
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: LambdaRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
             - Effect: Allow
               Action:
-              - ssm:GetParameter
-              - ssm:GetParameters
-              Resource: "*"
+              - lambda:InvokeFunction
+              Resource:
+              - Fn::GetAtt: [ MESHIFYgvisiongettextFunction , Arn ]
+Outputs:
+  MESHIFYgvisiongettextFunction:
+    Description: '/MESHIFY/MESHIFY/gvision/gettext/lambda'
+    Value:
+      Fn::GetAtt: [ MESHIFYgvisiongettextFunction , Arn ]
+  MESHIFYgvisiongettextRole:
+    Description: '/MESHIFY/MESHIFY/gvision/gettext/role'
+    Value:
+      Fn::GetAtt: [ InvokeRole , Arn ]

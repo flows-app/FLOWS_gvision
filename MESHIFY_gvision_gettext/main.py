@@ -1,24 +1,17 @@
-import boto3
 import json
 import base64
+import os
 import urllib.request
 import http.client
 
-SSM = boto3.client('ssm')
-
 gVisionUrl = 'https://vision.googleapis.com/v1/images:annotate?key='
+GoogleApiKey = os.environ.get("GoogleApiKey")
 
 def handler(event, context):
     print("event")
     print(event)
 
     fileUrl = event['file']
-
-    response = SSM.get_parameter(
-      Name='/MESHIFY/systems/google/apikey',
-      WithDecryption=True
-    )
-    gVisionApiKey =response['Parameter']['Value']
 
     #download file locally
     request = urllib.request.Request(fileUrl)
@@ -37,10 +30,10 @@ def handler(event, context):
             }]
         }]
     }
-    print(gVisionUrl + gVisionApiKey)
+    print(gVisionUrl + GoogleApiKey)
     header={'Content-Type': 'application/json'}
     req = urllib.request.Request(
-            gVisionUrl + gVisionApiKey,
+            gVisionUrl + GoogleApiKey,
             data=json.dumps(payload).encode("utf-8"),
             headers=header,
             method='POST')

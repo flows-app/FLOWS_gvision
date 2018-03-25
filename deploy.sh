@@ -6,5 +6,5 @@ if [ -z "$1" ]
     exit 1
 fi
 
-aws cloudformation package --template-file cf.yml --s3-bucket $1 --output-template .packaged-template.yml
-aws cloudformation deploy --template-file .packaged-template.yml --capabilities CAPABILITY_IAM --stack-name MESHIFY-gvision
+aws cloudformation package --template-file cf.yml --s3-bucket $1 --output-template .packaged-template.yml $2 $3
+aws cloudformation deploy --template-file .packaged-template.yml --capabilities CAPABILITY_IAM --stack-name MESHIFY-gvision $2 $3 $4 $5
