@@ -17,6 +17,15 @@ Resources:
         Variables:
           GoogleApiKey:
             Ref: GoogleApiKey
+  MESHIFYgvisiongettextLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+          - ""
+          - - "/aws/lambda/"
+            - Ref: MESHIFYgvisiongettextFunction
+      RetentionInDays: 7
   LambdaRole:
     Type: AWS::IAM::Role
     Properties:
