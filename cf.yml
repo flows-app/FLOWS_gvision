@@ -1,13 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: "meshify gvision"
+Description: "flows gvision"
 Parameters:
   GoogleApiKey:
     Type: String
 Resources:
-  MESHIFYgvisiongettextFunction:
+  gettextFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Code: MESHIFY_gvision_gettext
+      Code: gettext
       Handler: main.handler
       Role:
         Fn::GetAtt: [ LambdaRole , Arn ]
@@ -17,14 +17,14 @@ Resources:
         Variables:
           GoogleApiKey:
             Ref: GoogleApiKey
-  MESHIFYgvisiongettextLogGroup:
+  gettextLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName:
         Fn::Join:
           - ""
           - - "/aws/lambda/"
-            - Ref: MESHIFYgvisiongettextFunction
+            - Ref: gettextFunction
       RetentionInDays: 7
   LambdaRole:
     Type: AWS::IAM::Role
@@ -73,13 +73,13 @@ Resources:
               Action:
               - lambda:InvokeFunction
               Resource:
-              - Fn::GetAtt: [ MESHIFYgvisiongettextFunction , Arn ]
+              - Fn::GetAtt: [ gettextFunction , Arn ]
 Outputs:
-  MESHIFYgvisiongettextFunction:
-    Description: '/MESHIFY/MESHIFY/gvision/gettext/lambda'
+  gettextFunction:
+    Description: 'gettext'
     Value:
-      Fn::GetAtt: [ MESHIFYgvisiongettextFunction , Arn ]
-  MESHIFYgvisiongettextRole:
-    Description: '/MESHIFY/MESHIFY/gvision/gettext/role'
+      Fn::GetAtt: [ gettextFunction , Arn ]
+  gettextRole:
+    Description: 'gettext'
     Value:
       Fn::GetAtt: [ InvokeRole , Arn ]

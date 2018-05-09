@@ -1,0 +1,9 @@
+{
+    "id": "FLOWS/gvision/gettext",
+    "lambda": "lambda-arn",
+    "role": "iam-arn",
+    "type": "task",
+    "description": "executes a google vision OCR on the given document",
+    "icon": "https://flows.app/favicon.png",
+    "billing": "standard"
+}
