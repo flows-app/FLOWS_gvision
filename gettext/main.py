@@ -11,14 +11,16 @@ def handler(event, context):
     print("event")
     print(event)
 
-    fileUrl = event['file']
+    if('file' in event):
+        fileUrl = event['file']
 
-    #download file locally
-    request = urllib.request.Request(fileUrl)
-    with urllib.request.urlopen(request) as response:
-        encodedFile = base64.b64encode(response.read())
-        b64 = encodedFile.decode()
-
+        #download file locally
+        request = urllib.request.Request(fileUrl)
+        with urllib.request.urlopen(request) as response:
+            encodedFile = base64.b64encode(response.read())
+            b64 = encodedFile.decode()
+    else:
+        b64 = event['base64']
 
     payload = {
         "requests": [{
@@ -39,6 +41,7 @@ def handler(event, context):
             method='POST')
     req.add_header('ContentType','application/json')
     response = urllib.request.urlopen(req)
-    print(response.read())
-
-    return {"status":"done"}
+    responsejson = response.read().decode("utf-8")
+    tmpvalue = json.loads(responsejson)
+    textvalue=tmpvalue["responses"][0]["fullTextAnnotation"]["text"]
+    return {"textvalue":textvalue}
