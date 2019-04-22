@@ -13,6 +13,7 @@ Resources:
         Fn::GetAtt: [ LambdaRole , Arn ]
       Runtime: python3.6
       Timeout: 300
+      MemorySize: 512
       Environment:
         Variables:
           GoogleApiKey:

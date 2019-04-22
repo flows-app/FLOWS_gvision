@@ -8,8 +8,8 @@ gVisionUrl = 'https://vision.googleapis.com/v1/images:annotate?key='
 GoogleApiKey = os.environ.get("GoogleApiKey")
 
 def handler(event, context):
-    print("event")
-    print(event)
+    # print("event")
+    # print(event)
 
     if('file' in event):
         fileUrl = event['file']
@@ -21,6 +21,7 @@ def handler(event, context):
             b64 = encodedFile.decode()
     else:
         b64 = event['base64']
+    print("image size "+str(len(b64)))
 
     payload = {
         "requests": [{
@@ -32,7 +33,6 @@ def handler(event, context):
             }]
         }]
     }
-    print(gVisionUrl + GoogleApiKey)
     header={'Content-Type': 'application/json'}
     req = urllib.request.Request(
             gVisionUrl + GoogleApiKey,
@@ -43,5 +43,9 @@ def handler(event, context):
     response = urllib.request.urlopen(req)
     responsejson = response.read().decode("utf-8")
     tmpvalue = json.loads(responsejson)
-    textvalue=tmpvalue["responses"][0]["fullTextAnnotation"]["text"]
-    return {"textvalue":textvalue}
+    if 'error' in tmpvalue["responses"][0]:
+        print(tmpvalue)
+        return {"textvalue":""}
+    else:
+        textvalue=tmpvalue["responses"][0]["fullTextAnnotation"]["text"]
+        return {"textvalue":textvalue}
